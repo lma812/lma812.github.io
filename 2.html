@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>To-Do List</title>
+  <style>
+    form {
+      margin-bottom: 20px;
+      color: maroon;
+      font-size: 20px;
+
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th:first-child,
+    td:first-child {
+      width: 10%;
+    }
+
+    th:nth-child(2),
+    td:nth-child(2) {
+      width: 50%;
+    }
+
+    th:nth-child(3),
+    td:nth-child(3) {
+      width: 20%;
+    }
+
+    th:last-child,
+    td:last-child {
+      width: 20%;
+    }
+
+    th {
+      cursor: pointer;
+    }
+
+    th:hover {
+      background-color: #f5f5f5;
+    }
+
+    .high {
+      background-color: red;
+    }
+
+    .medium {
+      background-color: orange;
+      ;
+    }
+
+    .low {
+      background-color: yellow;
+    }
+  </style>
+</head>
+
+<body>
+
+  <form id="todoForm">
+    <label for="task">Task:</label>
+    <input type="text" id="task" required>
+    <br>
+    <label for="dueDate">Due Date:</label>
+    <input type="date" id="dueDate" required>
+    <br>
+    <label for="priority">Priority:</label>
+    <select id="priority" required>
+      <option value="high">High</option>
+      <option value="medium">Medium</option>
+      <option value="low">Low</option>
+    </select>
+
+    <button type="submit">Add Task</button>
+  </form>
+
+  <table id="todoList">
+    <thead>
+      <tr>
+        <th></th>
+        <th onclick="sortTable(1)">Task</th>
+        <th onclick="sortTable(2)">Due Date</th>
+        <th onclick="sortTable(3)">Priority</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <br> <br> <br>
+  <button id="clearButton">Delete Checked Tasks</button>
+
+  <script>
+    function addTask(event) {
+      event.preventDefault();
+
+      var taskInput = document.getElementById("task");
+      var dueDateInput = document.getElementById("dueDate");
+      var priorityInput = document.getElementById("priority");
+
+      var task = taskInput.value;
+      var dueDate = dueDateInput.value;
+      var priority = priorityInput.value;
+
+      var table = document.getElementById("todoList").getElementsByTagName('tbody')[0];
+      var newRow = table.insertRow();
+      var checkCell = newRow.insertCell(0);
+      var checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.name = 'name1';
+      checkCell.appendChild(checkbox);
+      var taskCell = newRow.insertCell(1);
+      var dueDateCell = newRow.insertCell(2);
+      var priorityCell = newRow.insertCell(3);
+      var removeCell = newRow.insertCell(4);
+
+      taskCell.textContent = task;
+      dueDateCell.textContent = dueDate;
+      priorityCell.textContent = priority;
+      //need this for background color
+      priorityCell.classList.add(priority.toLowerCase());
+
+      //reset form
+      taskInput.value = "";
+      dueDateInput.value = "";
+      priorityInput.value = "high";
+    }
+
+    function sortTable(columnIndex) {
+      var table, rows, switching, i, x, y, shouldSwitch;
+      var priorityOrder = {
+        "high": 3,
+        "medium": 2,
+        "low": 1
+      };
+      table = document.getElementById("todoList");
+      switching = true;
+
+      while (switching) {
+        switching = false;
+        rows = table.rows;
+
+        for (i = 1; i < (rows.length - 1); i++) {
+          shouldSwitch = false;
+          x = rows[i].getElementsByTagName("td")[columnIndex];
+          y = rows[i + 1].getElementsByTagName("td")[columnIndex];
+
+          if ('innerHTML' in x && 'innerHTML' in y && x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+            shouldSwitch = true;
+            break;
+          }
+
+        }
+
+        if (shouldSwitch) {
+          rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+          switching = true;
+        }
+      }
+    }
+    function deleteTask() {
+      var checkboxes = document.querySelectorAll('#todoList input[type="checkbox"]');
+      checkboxes.forEach(function (checkbox) {
+        if (checkbox.checked) {
+          var row = checkbox.closest('tr');
+          row.parentNode.removeChild(row);
+          alert("removed");
+        }
+      });
+
+    }
+
+
+    document.getElementById("todoForm").addEventListener("submit", addTask);
+    document.getElementById("clearButton").addEventListener("click", deleteTask);
+  </script>
+
+</body>
+
+</html>
