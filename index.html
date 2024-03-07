@@ -6,52 +6,70 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>To-Do List</title>
   <style>
+    body {
+      font-family: papyrus;
+      margin: 30px;
+      padding: 10px;
+      text-align: center;
+    }
+    
     form {
       margin-bottom: 20px;
       color: maroon;
       font-size: 20px;
+      text-align: center;
+      font-family: papyrus;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    select {
+      padding: 0px;
+      font-size: 12px;
+      border-radius: 5px;
+      border: 1px solid;
+      font-family: papyrus;
+      text-align: center;
+    }
+    
+    button[type="submit"],
+      button {
+        padding: 5px 15px;
+        font-size: 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-family: papyrus;
+      }
+
+    h2 {
+      color: #333;
+      text-align: center;
     }
 
     table {
       width: 100%;
+      margin-left:30px auto;
+      margin-right:30px auto;
       border-collapse: collapse;
     }
 
     th,
     td {
       padding: 8px;
-      text-align: left;
+      text-align: center;
       border-bottom: 1px solid #ddd;
-    }
-
-    th:first-child,
-    td:first-child {
-      width: 10%;
-    }
-
-    th:nth-child(2),
-    td:nth-child(2) {
-      width: 50%;
-    }
-
-    th:nth-child(3),
-    td:nth-child(3) {
-      width: 20%;
-    }
-
-    th:nth-child(4),
-    td:nth-child(4) {
-      width: 20%;
     }
 
     th {
       cursor: pointer;
+      
     }
 
     th:hover {
       background-color: #f5f5f5;
     }
-
+    
     .high {
       background-color: red;
     }
@@ -63,6 +81,10 @@
     .low {
       background-color: yellow;
     }
+
+    .completed {
+      text-decoration: line-through;
+      color: gray;
     }
   </style>
 </head>
@@ -86,12 +108,11 @@
     <button type="submit">Add Task</button>
   </form>
 
-  <h3>Task List</h3>
   <table id="todoList">
     <thead>
       <tr>
         <th></th>
-        <th onclick="sortTable(1)">Task</th>
+        <th onclick="sortTable(1)">Task List</th>
         <th onclick="sortTable(2)">Due Date</th>
         <th onclick="sortTable(3)">Priority</th>
       </tr>
@@ -99,11 +120,14 @@
     <tbody></tbody>
   </table>
   <br> <br> <br>
-  <button id="clearButton">Delete</button>
-  <button id="undoButton">Undo</button>
+  <div style="text-align: center;">
+    
+    <button id="completionButton">Mark as Completed</button>
+    <button id="clearButton">Delete</button>
+    <button id="undoButton">Undo</button>
+  </div>
 
   <script>
-    // Global stack to store actions
     var actionStack = [];
 
     function addTask(event) {
@@ -132,11 +156,8 @@
       taskCell.textContent = task;
       dueDateCell.textContent = dueDate;
       priorityCell.textContent = priority;
-      //need this for background color
-      priorityCell.classList.add(priority.toLowerCase());
-
-      // Add the task addition action to the stack
-      actionStack.push({action: 'add', taskRow: newRow});
+      priorityCell.classList.add(priority);
+      actionStack.push({action: 'add', row: newRow});
 
       //reset form
       taskInput.value = "";
@@ -145,29 +166,33 @@
     }
 
     function sortTable(columnIndex) {
-      var table, rows, switching, i, x, y, shouldSwitch;
+      var rows, switching, shouldSwitch, x, y;
       var priorityOrder = {
-        "high": 3,
+        "high": 1,
         "medium": 2,
-        "low": 1
+        "low": 3
       };
-      table = document.getElementById("todoList");
       switching = true;
 
       while (switching) {
         switching = false;
-        rows = table.rows;
+        rows = document.getElementById("todoList").rows;
 
-        for (i = 1; i < (rows.length - 1); i++) {
+        for (var i = 1; i < rows.length - 1; i++) {
           shouldSwitch = false;
-          x = rows[i].getElementsByTagName("td")[columnIndex];
-          y = rows[i + 1].getElementsByTagName("td")[columnIndex];
 
-          if ('innerHTML' in x && 'innerHTML' in y && x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+          if (columnIndex === 3) {
+            x = priorityOrder[rows[i].cells[columnIndex].textContent];
+            y = priorityOrder[rows[i + 1].cells[columnIndex].textContent];
+          }  else {
+            x = rows[i].cells[columnIndex].textContent;
+            y = rows[i + 1].cells[columnIndex].textContent.toLowerCase();
+          }
+
+          if (x > y) {
             shouldSwitch = true;
             break;
           }
-
         }
 
         if (shouldSwitch) {
@@ -177,41 +202,103 @@
       }
     }
 
+    function markComplete() {
+      var completeStack = [];
+      var anyChecked = false;
+      var checkboxes = document.querySelectorAll('#todoList input[type="checkbox"]');
+      checkboxes.forEach(function (checkbox) {
+        if (checkbox.checked) {
+          anyChecked = true;
+          var row = checkbox.closest('tr');
+          row.classList.add('completed');
+          completeStack.push({row});
+          checkbox.checked = false;
+        }
+      });
+      if (!anyChecked)
+        return;
+      actionStack.push({action: 'complete', completeStack});
+      alert("Task marked as complete!");
+    }
+
     function deleteTask() {
+      var deleteStack = [];
       var checkboxes = document.querySelectorAll('#todoList input[type="checkbox"]');
       checkboxes.forEach(function (checkbox) {
         if (checkbox.checked) {
           var row = checkbox.closest('tr');
-          // Store the task deletion action to the stack
-          actionStack.push({action: 'delete', taskRow: row.outerHTML});
-          row.parentNode.removeChild(row);
+          var completed = row.classList.contains('completed'); 
+          deleteStack.push({ row, completed });
+          row.remove(); 
         }
       });
+      actionStack.push({action: 'delete', deleteStack});
     }
 
     function undoAction() {
       if (actionStack.length > 0) {
         var lastAction = actionStack.pop();
         if (lastAction.action === 'add') {
-          lastAction.taskRow.parentNode.removeChild(lastAction.taskRow);
-        } else if (lastAction.action === 'delete') {
-          var tableBody = document.getElementById('todoList').getElementsByTagName('tbody')[0];
-          var tempRow = document.createElement('tr');
-          tempRow.innerHTML = lastAction.taskRow;
-          tableBody.appendChild(tempRow);
-        } else if (lastAction.action === 'modify') {
-          var tableBody = document.getElementById('todoList').getElementsByTagName('tbody')[0];
-          var tempRow = document.createElement('tr');
-          tempRow.innerHTML = lastAction.taskRow;
-          var modifiedRow = tableBody.querySelector('tr:last-child');
+          lastAction.row.remove();
 
+        } else if (lastAction.action === 'delete') {
+          lastAction.deleteStack.forEach(function (item) {
+            var tableBody = document.getElementById('todoList').getElementsByTagName('tbody')[0];
+            var tempRow = document.createElement('tr');
+            tempRow.innerHTML = item.row.innerHTML;
+            tableBody.appendChild(tempRow);
+            if (item.completed) {
+              tempRow.classList.add('completed');
+            }
+          });
+
+        } else if (lastAction.action === 'complete') {
+          lastAction.completeStack.forEach(function (item) {
+            var row = item.row;
+            row.classList.remove('completed');
+          });
         }
       }
     }
 
+    function generateRow() {
+      // Random values for task, due date, and priority
+      var tasks = ["Task A", "Task B", "Task C"];
+      var randomTask = tasks[Math.floor(Math.random() * tasks.length)];
 
-    // Event listeners
+      var randomDueDate = new Date(Date.now() + Math.random() * 7 * 24 * 60 * 60 * 1000); // Random date within next 7 days
+      var formattedDueDate = randomDueDate.toISOString().split('T')[0];
+
+      var priorities = ["high", "medium", "low"];
+      var randomPriority = priorities[Math.floor(Math.random() * priorities.length)];
+
+      // Create new row
+      var table = document.getElementById("todoList").getElementsByTagName('tbody')[0];
+      var newRow = table.insertRow();
+
+      // Insert cells with randomized values
+      var checkCell = newRow.insertCell(0);
+      var checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.name = 'name1';
+      checkCell.appendChild(checkbox);
+
+      var taskCell = newRow.insertCell(1);
+      taskCell.textContent = randomTask;
+
+      var dueDateCell = newRow.insertCell(2);
+      dueDateCell.textContent = formattedDueDate;
+
+      var priorityCell = newRow.insertCell(3);
+      priorityCell.textContent = randomPriority;
+      priorityCell.classList.add(randomPriority.toLowerCase());
+
+      actionStack.push({action: 'add', row: newRow});
+    }
+
+   
     document.getElementById("todoForm").addEventListener("submit", addTask);
+    document.getElementById("completionButton").addEventListener("click", markComplete);
     document.getElementById("clearButton").addEventListener("click", deleteTask);
     document.getElementById("undoButton").addEventListener("click", undoAction);
   </script>

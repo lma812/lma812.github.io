@@ -1,0 +1,147 @@
+
+TASKLIST PRIORITY:
+Enter task and it will appear in the table below. 
+Create table with sort function
+  -has date and priority
+Allow completion indication / Delete task
+  -they are not the same 
+    - cross out completed
+    -feedback noise when completion is indicated / or alert
+
+Allow subtasks //n
+  - When main checkbox is checked, all subtasks are also checked and vice versa
+  - can only add subtask to existing task. inserts between current task and task below. 
+  - probably also need to set different due date and priority.
+Allow editing on the table. // n
+
+- convert to bootstrap 
+- style
+
+
+Initial Sketch:
+https://imgur.com/a/16JXLBs
+
+
+style table:
+https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Styling_tables
+
+Styling tutorial: 
+
+https://www.freecodecamp.org/news/innerhtml-vs-innertext-vs-textcontent/
+
+ChatGPT:
+I've inserted my code into ChatGPT numerous times to check for syntax errors and different methods I can use. Aside from syntax errors, these are the pieces of code that I ended up using and my prompts for them. 
+
+how do i make a sorted table in HTML?
+function sortTable(columnIndex) {
+  var table, rows, switching, i, x, y, shouldSwitch;
+  table = document.getElementById("myTable");
+  switching = true;
+  while (switching) {
+    switching = false;
+    rows = table.rows;
+    for (i = 1; i < (rows.length - 1); i++) {
+      shouldSwitch = false;
+      x = rows[i].getElementsByTagName("td")[columnIndex];
+      y = rows[i + 1].getElementsByTagName("td")[columnIndex];
+      if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+        shouldSwitch = true;
+        break;
+      }
+    }
+    if (shouldSwitch) {
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
+    }
+  }
+}
+
+how do I right align my delete and undo button?
+<body>
+  <!-- Other HTML code -->
+  <div style="text-align: right;">
+    <button id="clearButton">Delete</button>
+    <button id="undoButton">Undo</button>
+  </div>
+  <script>
+    // JavaScript code
+  </script>
+</body>
+
+how do i insert a checkbox in this table? 
+
+var checkCell = newRow.insertCell(0);
+var checkbox = document.createElement('input');
+checkbox.type = 'checkbox';
+checkbox.name = 'name1';
+checkCell.appendChild(checkbox);
+
+how do i get the checked box from an existing table to remove a row?
+function removeCheckedRows() {
+    // Get all checkboxes in the table
+    var checkboxes = document.querySelectorAll('#todoList input[type="checkbox"]');
+    
+    // Iterate over each checkbox
+    checkboxes.forEach(function(checkbox) {
+        // Check if the checkbox is checked
+        if (checkbox.checked) {
+            // Get the parent row of the checkbox
+            var row = checkbox.closest('tr');
+            
+            // Remove the row from the table
+            row.parentNode.removeChild(row);
+        }
+    });
+}
+
+
+how do i add an undo button that can undo deletions and additions?
+
+To implement an "Undo" button that can revert both task additions and deletions, you can maintain a stack to keep track of actions performed (both adding and deleting tasks). Here's how you can modify your code to achieve this:
+
+var actionStack = [];
+ actionStack.push({ action: 'add', taskRow: newRow });
+  actionStack.push({ action: 'delete', taskRow: row.outerHTML });
+  function undoAction() {
+    if (actionStack.length > 0) {
+      var lastAction = actionStack.pop();
+      if (lastAction.action === 'add') {
+        lastAction.taskRow.parentNode.removeChild(lastAction.taskRow);
+      } else if (lastAction.action === 'delete') {
+        var tableBody = document.getElementById('todoList').getElementsByTagName('tbody')[0];
+        var tempRow = document.createElement('tr');
+        tempRow.textContent = lastAction.taskRow;
+        tableBody.appendChild(tempRow);
+      }
+    }
+  }
+
+
+
+Troubleshoot: 
+I did have a slight problem with how priority could be sorted. With the sort that I have, a ascending sort based on textContent value, which works with sorting Task List and Due Date, but not priority. I found that object literals can assign an inner value to variables like this:
+        "high": 3,
+        "medium": 2,
+        "low": 1
+So, I now can keep the sort that I already had. 
+
+When I deleted something or marked something as completed and pressed the undo button, it would undo each row one at a time. To fix this, I pushed all of the checked boxed rows into an array and appended them together. 
+Also made sure to move action stack out of the inner loops, so that I can register the grouping as a singular action. 
+
+I had a lot of trouble with removing the classList 'completed'. Before I created completionStack, I only had actionStack and every action was stored in there. So I had "lastAction.taskRow.classList.remove('completed');" and I would constantly get this kind of error: "TypeError: Cannot read properties of undefined (reading 'remove')". I'm still not completely sure, but what I have right now works, so that's cool. 
+
+Pressing "Mark as Completed" still brings up completion alert. Fixed by adding boolean variable anyChecked.
+
+Marking something as completed -> Deleting -> Undo. 
+does not bring it back to the state of 'completed'. Fixed by pushing boolean variable that is based on whether the row's classList contains 'completed'. Also needed to use use innerHTML instead of textContent because the cells weren't kept. 
+
+
+
+After filling out the Create Task form, it resets to default. 
+Make sure every criteria is required.
+
+After marking something as completed, checkbox is unchecked. 
+
+Created undo button that goes up an array undoing actions.
+
+Delete button works.
