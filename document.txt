@@ -22,10 +22,80 @@ Initial Sketch:
 https://imgur.com/a/16JXLBs
 
 
-style table:
-https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Styling_tables
+Is your site targeted to a specific group of users? If so, what are the demographics of that
+group and how do you appeal to this group? What were some design considerations that you took into account when you designed your site?
+
+ My site is targeted specifically to me and what I would want in my To-Do List app. In the end, it is something of my creation, so that, above anything, appeals to me. My most important design consideration is functionality. Rather than adding features that don't work as I intend, I just scrap it. 
+
+What about your interface do you think is particularly appealing? Is there anything that
+you think could be improved upon?
+
+I am happy with how the undo button turned out. But I do feel like a redo button would be cool too. 
+
+There are a lot of things to improve on. Adding subtasks, sounds, widgets, icons. I know I could do much better. I will continue to work on this after submission.
+
+
+● Refer to Schneiderman’s eight heuristics for interface design. Which did you consider in
+your site and how?
+
+1. Consistency
+like every todolist that's ever been made.
+2. Shortcuts
+n
+3. Informative Feedback
+- clicking headers sort
+- mark as complete has alert and strike through on text
+4. Dialogue
+- universal type cursor 
+5. Error handling
+-cannot mark as complete or delete without checking box
+-cannot add task without required fields.
+6. Permit reversal of actions
+- undo button. This is my most intentional consideration of the eight rules. 
+
+7. Support internal locus of control
+-given
+8. Reduce short-term memory load
+- I do only have a few buttons.
+
+● Identify at least one affordance and one constraint in your site and explain how they are made visible. 
+
+My undo button undoes the most recent action, which is exactly what an undo button should do. 
+
+Required input of task field before the form can be submitted into the table. Reminder by alert. 
+
+  
+  ● a list of exactly which tasks you completed and which you did not
+
+COMPLETED:
+Create a website using HTML and Bootstrap (use the starter template and include the responsive meta-tag to make your site responsive on mobile devices). (2 pts)
+Add a list of tasks and use CSS to format the list so that it is a well-designed to do list. Be thoughtful and intentional about your design. (2 pts)
+Allow the user to add items to the to do list. (This will require additional HTML elements as well as JavaScript.) (2 pts)
+Allow the user to indicate completion of a task (e.g. check off, cross out) and removal from the list. (2 pts)
+Allow the user to delete tasks from the list. (Note that this is not the same as completing tasks; the user may decide that it was an error to have included the tasks in the first place.) (2 pts)
+Make it Better
+Allow users to associate a due date with a task and display the due dates next to the tasks. (Use <input type="date"> for the date input.) (2 pts)
+Allow users to “un-complete” items that were accidentally checked off. (1 pts)
+Even Better
+Allow users to color code tasks to indicate priority or type of task. (2 pts)
+Give some sort of celebratory recognition when users complete a task – visual or sound
+r both – beyond the simple feedback of the check/cross out. (See Google Tasks for an example.) Again, be thoughtful and deliberate about your design. (1 pt)
+
+NOT COMPLETED:
+Allow users to define subtasks. Subtasks should be able to be checked off/deleted
+individually OR checked off /deleted together with the super-task. (1 pt)
+Grading Details: The following are a prerequisite to my grading your assignment. (If these conditions are not met, it’s an automatic zero): ● Use of GitHub and GitHub pages ● Inclusion of a list of clear citations to resources used in completing this assignment ● A clear list of which tasks you have completed Completing the written document
+
+Also include:
+● references/citations to resources that you used (as above) 
+
+CITATIONS:
 
 Styling tutorial: 
+https://youtu.be/1PnVor36_40?si=bYUqS8IqCR9JdjBS
+
+style table:
+https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Styling_tables
 
 https://www.freecodecamp.org/news/innerhtml-vs-innertext-vs-textcontent/
 
@@ -134,8 +204,6 @@ Pressing "Mark as Completed" still brings up completion alert. Fixed by adding b
 
 Marking something as completed -> Deleting -> Undo. 
 does not bring it back to the state of 'completed'. Fixed by pushing boolean variable that is based on whether the row's classList contains 'completed'. Also needed to use use innerHTML instead of textContent because the cells weren't kept. 
-
-
 
 After filling out the Create Task form, it resets to default. 
 Make sure every criteria is required.

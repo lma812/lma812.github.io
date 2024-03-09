@@ -96,7 +96,7 @@
     <input type="text" id="task" required>
     <br>
     <label for="dueDate">Due Date:</label>
-    <input type="date" id="dueDate" required>
+    <input type="date" id="dueDate">
     <br>
     <label for="priority">Priority:</label>
     <select id="priority" required>
@@ -215,23 +215,32 @@
           checkbox.checked = false;
         }
       });
-      if (!anyChecked)
+      if (!anyChecked){
+        alert("Please select a task to mark as completed.")
         return;
+      }
       actionStack.push({action: 'complete', completeStack});
       alert("Task marked as complete!");
+      
     }
 
     function deleteTask() {
       var deleteStack = [];
       var checkboxes = document.querySelectorAll('#todoList input[type="checkbox"]');
+      var anyChecked = false;
       checkboxes.forEach(function (checkbox) {
         if (checkbox.checked) {
+          anyChecked = true;
           var row = checkbox.closest('tr');
           var completed = row.classList.contains('completed'); 
           deleteStack.push({ row, completed });
           row.remove(); 
         }
       });
+      if (!anyChecked){
+        alert("Please select a task to delete.")
+        return;
+      }
       actionStack.push({action: 'delete', deleteStack});
     }
 
