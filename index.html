@@ -5,71 +5,68 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>To-Do List</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
   <style>
-    body {
-      font-family: papyrus;
-      margin: 30px;
-      padding: 10px;
+    * {
+      font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans';
       text-align: center;
+
     }
-    
+
+    body {
+      margin: 30px;
+      padding: 5px;
+    }
+
     form {
       margin-bottom: 20px;
       color: maroon;
       font-size: 20px;
-      text-align: center;
-      font-family: papyrus;
     }
 
     input[type="text"],
     input[type="date"],
     select {
-      padding: 0px;
+      padding: 1px;
       font-size: 12px;
       border-radius: 5px;
       border: 1px solid;
-      font-family: papyrus;
-      text-align: center;
     }
-    
+
     button[type="submit"],
-      button {
-        padding: 5px 15px;
-        font-size: 15px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-family: papyrus;
-      }
+    button {
+      padding: 3px 10px;
+      font-size: 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
 
     h2 {
-      color: #333;
-      text-align: center;
+      font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans';
+      color: #A30015;
     }
 
     table {
-      width: 100%;
-      margin-left:30px auto;
-      margin-right:30px auto;
+      margin: 0 auto;
       border-collapse: collapse;
     }
 
     th,
     td {
       padding: 8px;
-      text-align: center;
       border-bottom: 1px solid #ddd;
     }
 
     th {
       cursor: pointer;
-      
+      font-size: 15px;
     }
 
     th:hover {
       background-color: #f5f5f5;
     }
-    
+
     .high {
       background-color: red;
     }
@@ -121,12 +118,14 @@
   </table>
   <br> <br> <br>
   <div style="text-align: center;">
-    
     <button id="completionButton">Mark as Completed</button>
     <button id="clearButton">Delete</button>
     <button id="undoButton">Undo</button>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+
+  
   <script>
     var actionStack = [];
 
@@ -184,7 +183,7 @@
           if (columnIndex === 3) {
             x = priorityOrder[rows[i].cells[columnIndex].textContent];
             y = priorityOrder[rows[i + 1].cells[columnIndex].textContent];
-          }  else {
+          } else {
             x = rows[i].cells[columnIndex].textContent;
             y = rows[i + 1].cells[columnIndex].textContent.toLowerCase();
           }
@@ -215,13 +214,13 @@
           checkbox.checked = false;
         }
       });
-      if (!anyChecked){
+      if (!anyChecked) {
         alert("Please select a task to mark as completed.")
         return;
       }
       actionStack.push({action: 'complete', completeStack});
       alert("Task marked as complete!");
-      
+
     }
 
     function deleteTask() {
@@ -231,13 +230,14 @@
       checkboxes.forEach(function (checkbox) {
         if (checkbox.checked) {
           anyChecked = true;
+          checkbox.checked = false;
           var row = checkbox.closest('tr');
-          var completed = row.classList.contains('completed'); 
-          deleteStack.push({ row, completed });
-          row.remove(); 
+          var completed = row.classList.contains('completed');
+          deleteStack.push({row, completed});
+          row.remove();
         }
       });
-      if (!anyChecked){
+      if (!anyChecked) {
         alert("Please select a task to delete.")
         return;
       }
@@ -249,63 +249,26 @@
         var lastAction = actionStack.pop();
         if (lastAction.action === 'add') {
           lastAction.row.remove();
-
         } else if (lastAction.action === 'delete') {
           lastAction.deleteStack.forEach(function (item) {
             var tableBody = document.getElementById('todoList').getElementsByTagName('tbody')[0];
-            var tempRow = document.createElement('tr');
-            tempRow.innerHTML = item.row.innerHTML;
+            var tempRow = item.row;
             tableBody.appendChild(tempRow);
             if (item.completed) {
               tempRow.classList.add('completed');
             }
           });
-
         } else if (lastAction.action === 'complete') {
           lastAction.completeStack.forEach(function (item) {
             var row = item.row;
             row.classList.remove('completed');
           });
         }
+      } else {
+        alert("There is nothing to undo.");
       }
     }
 
-    function generateRow() {
-      // Random values for task, due date, and priority
-      var tasks = ["Task A", "Task B", "Task C"];
-      var randomTask = tasks[Math.floor(Math.random() * tasks.length)];
-
-      var randomDueDate = new Date(Date.now() + Math.random() * 7 * 24 * 60 * 60 * 1000); // Random date within next 7 days
-      var formattedDueDate = randomDueDate.toISOString().split('T')[0];
-
-      var priorities = ["high", "medium", "low"];
-      var randomPriority = priorities[Math.floor(Math.random() * priorities.length)];
-
-      // Create new row
-      var table = document.getElementById("todoList").getElementsByTagName('tbody')[0];
-      var newRow = table.insertRow();
-
-      // Insert cells with randomized values
-      var checkCell = newRow.insertCell(0);
-      var checkbox = document.createElement('input');
-      checkbox.type = 'checkbox';
-      checkbox.name = 'name1';
-      checkCell.appendChild(checkbox);
-
-      var taskCell = newRow.insertCell(1);
-      taskCell.textContent = randomTask;
-
-      var dueDateCell = newRow.insertCell(2);
-      dueDateCell.textContent = formattedDueDate;
-
-      var priorityCell = newRow.insertCell(3);
-      priorityCell.textContent = randomPriority;
-      priorityCell.classList.add(randomPriority.toLowerCase());
-
-      actionStack.push({action: 'add', row: newRow});
-    }
-
-   
     document.getElementById("todoForm").addEventListener("submit", addTask);
     document.getElementById("completionButton").addEventListener("click", markComplete);
     document.getElementById("clearButton").addEventListener("click", deleteTask);

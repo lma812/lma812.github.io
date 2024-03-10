@@ -25,7 +25,7 @@ https://imgur.com/a/16JXLBs
 Is your site targeted to a specific group of users? If so, what are the demographics of that
 group and how do you appeal to this group? What were some design considerations that you took into account when you designed your site?
 
- My site is targeted specifically to me and what I would want in my To-Do List app. In the end, it is something of my creation, so that, above anything, appeals to me. My most important design consideration is functionality. Rather than adding features that don't work as I intend, I just scrap it. 
+ My site is targeted specifically to me and what I would want in my To-Do List app. In the end, it is something of my creation; so that, above anything, appeals to me. My most important design consideration is functionality. Rather than adding features that don't work as I intend, I just scrap it. Next, I like simplicity over clutter. 
 
 What about your interface do you think is particularly appealing? Is there anything that
 you think could be improved upon?
@@ -84,6 +84,9 @@ r both – beyond the simple feedback of the check/cross out. (See Google Tasks 
 NOT COMPLETED:
 Allow users to define subtasks. Subtasks should be able to be checked off/deleted
 individually OR checked off /deleted together with the super-task. (1 pt)
+
+
+
 Grading Details: The following are a prerequisite to my grading your assignment. (If these conditions are not met, it’s an automatic zero): ● Use of GitHub and GitHub pages ● Inclusion of a list of clear citations to resources used in completing this assignment ● A clear list of which tasks you have completed Completing the written document
 
 Also include:
@@ -204,6 +207,8 @@ Pressing "Mark as Completed" still brings up completion alert. Fixed by adding b
 
 Marking something as completed -> Deleting -> Undo. 
 does not bring it back to the state of 'completed'. Fixed by pushing boolean variable that is based on whether the row's classList contains 'completed'. Also needed to use use innerHTML instead of textContent because the cells weren't kept. 
+
+I couldn't undo all the way back to the beginning. In my undoAction method, I created a new row that wasn't pushed to the actionStack. Fixed by using the reference of the deleted row and appending it.
 
 After filling out the Create Task form, it resets to default. 
 Make sure every criteria is required.
